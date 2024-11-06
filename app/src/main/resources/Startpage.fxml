@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StandingPomodoro.app.Controller.Startpage">
+  <VBox alignment="CENTER" prefHeight="400" prefWidth="600" spacing="30">
+    <HBox alignment="CENTER" spacing="50">
+      <VBox alignment="CENTER_RIGHT" prefHeight="200" prefWidth="200">
+        <Text fx:id="remainingTimePomodoro" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+        <ProgressBar fx:id="progressPomodoro" prefWidth="200.0" progress="0.0" />
+      </VBox>
+      <VBox  alignment="CENTER_LEFT" prefHeight="200" prefWidth="200">
+         <Text fx:id="remainingTimeStanding" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+         <ProgressBar fx:id="progressStanding" prefWidth="200.0" progress="0.0" />
+      </VBox>
+    </HBox>
+    <HBox alignment="CENTER" spacing="50">
+      <VBox alignment="CENTER" prefWidth="200" spacing="20">
+        <HBox alignment="CENTER">
+          <Text fx:id="configPomodoro" textAlignment="CENTER" />
+        </HBox>
+        <HBox alignment="CENTER" spacing="10">
+          <Button fx:id="btnConfigPomodoro" mnemonicParsing="false" onAction="#goToConfigurationPomodoro" text="edit pomodoro" />
+          <Button fx:id="btnStartPomodoro" text="start" />
+        </HBox>
+      </VBox>
+      <VBox alignment="CENTER" prefWidth="200" spacing="20">
+        <HBox alignment="CENTER">
+          <Text fx:id="configStanding" />
+        </HBox>
+        <HBox alignment="CENTER" spacing="10">
+          <Button onAction="#goToConfigurationStanding" text="edit standing" />
+          <Button fx:id="btnStartStanding" onAction="#startStanding" text="start" />
+          <Button fx:id="btnResetStanding" onAction="#resetStanding" text="reset"/>
+        </HBox>
+      </VBox>
+    </HBox>
+  </VBox>
+</AnchorPane>
