@@ -12,7 +12,6 @@ public class PomodoroEntity {
     private long id;
 
     int concentrationTime;
-
     int shortBreak;
     int longBreak;
 

@@ -60,7 +60,7 @@ public class ConfigurationStanding {
 
     @FXML
     public void takeConfiguration(ActionEvent event) throws IOException {
-        if (inputStandingTime.getText()!="" && inputSeatingTime.getText()!="" && componentService.getNewStartPossible()){
+        if (inputStandingTime.getText()!="" && inputSeatingTime.getText()!="" && componentService.getNewStandingStartPossible()){
             componentService.setStandingTimes(new Integer[]{Integer.parseInt(inputSeatingTime.getText()), Integer.parseInt(inputStandingTime.getText())});
             log.info(String.valueOf(componentService.getStandingTimes()[1]));
             goBackToStartpage(event);

@@ -1,42 +1,64 @@
 package StandingPomodoro.app.Service;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 public class ComponentService {
 
     private Integer[] pomodoroTimes;
     private Integer[] standingTimes;
-    private boolean newStartPossible;
+    private boolean newStandingStartPossible;
 
     public ComponentService(){
         pomodoroTimes = new Integer[]{25,15,10};
         standingTimes = new Integer[]{45,15};
-        newStartPossible = true;
+        newStandingStartPossible = true;
     }
 
-    public Integer[] getPomodoroTimes() {
-        return pomodoroTimes;
+    private static class PomodoroInfo {
+        private int concentration;
+        private int shortBreak;
+        private int longBreak;
+        public PomodoroInfo(int concentration, int shortBreak, int longBreak){
+            this.concentration = concentration;
+            this.shortBreak = shortBreak;
+            this.longBreak = longBreak;
+        }
+        public int getConcentrationDuration(){
+            return concentration;
+        }
+        public int getShortBreak() {
+            return shortBreak;
+        }
+        public int getLongBreak() {
+            return longBreak;
+        }
     }
 
     public Integer[] getStandingTimes() {
         return standingTimes;
     }
 
-    public void setPomodoroTimes(Integer[] times){
-        this.pomodoroTimes = times;
-    }
-
     public void setStandingTimes(Integer[] times){
         this.standingTimes = times;
     }
 
-    public void setNewStartPossible(boolean seating){
-        newStartPossible = seating;
+    public void setNewStandingStartPossible(boolean seating){
+        newStandingStartPossible = seating;
     }
 
-    public boolean getNewStartPossible(){
-        return newStartPossible;
+    public boolean getNewStandingStartPossible(){
+        return newStandingStartPossible;
     }
+
+    public PomodoroInfo setNewPomodoroTimer(int concentration, int shortBreak, int longBreak){
+        return new PomodoroInfo(concentration, shortBreak, longBreak);
+    }
+
+
+
+
+
 }

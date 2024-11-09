@@ -13,13 +13,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
-import javax.management.MXBean;
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.ScheduledFuture;
@@ -71,11 +67,10 @@ public class Startpage {
     @FXML
     public void initialize(){
         Integer[] standingTimes = componentService.getStandingTimes();
-        Integer[] pomodoroTimes = componentService.getPomodoroTimes();
-        this.btnStartStanding.setDisable(!componentService.getNewStartPossible());
-        this.btnResetStanding.setDisable(componentService.getNewStartPossible());
+        this.btnStartStanding.setDisable(!componentService.getNewStandingStartPossible());
+        this.btnResetStanding.setDisable(componentService.getNewStandingStartPossible());
         this.configStanding.setText("seating:"+standingTimes[0]+", standing: "+standingTimes[1]);
-        this.configPomodoro.setText("concentration: "+pomodoroTimes[0]+", short break: "+pomodoroTimes[1]+",\n long break: "+pomodoroTimes[2]);
+        this.configPomodoro.setText("please set or load configuration");
         this.remainingTimeStanding.setText("00:00");
     }
 
@@ -102,15 +97,17 @@ public class Startpage {
 
     @FXML
     public void startStanding(ActionEvent event){
-        componentService.setNewStartPossible(false);
-        this.btnStartStanding.setDisable(!componentService.getNewStartPossible());
-        this.btnResetStanding.setDisable(componentService.getNewStartPossible());
+        componentService.setNewStandingStartPossible(false);
+        this.btnStartStanding.setDisable(!componentService.getNewStandingStartPossible());
+        this.btnResetStanding.setDisable(componentService.getNewStandingStartPossible());
         Integer[] times = this.componentService.getStandingTimes();
         int seatingTime = times[0];
         this.startTime = new Date().getTime();
         this.endTime = startTime+seatingTime*60000;
         seatingActive = true;
         startStandingTimer();
+
+
     }
 
     private void startStandingTimer(){
@@ -119,35 +116,40 @@ public class Startpage {
 
     private boolean seatingActive = true;
 
-    private void updateStanding(){
-        long remainingTime = endTime-(new Date().getTime());
-        if (remainingTime<0){
-            if (seatingActive){
-                seatingActive = false;
-                startTime=new Date().getTime();
-                int standingTime = componentService.getStandingTimes()[1]*60000;
-                endTime=startTime+standingTime;
-                remainingTime = endTime-(new Date().getTime());
+    private void updateStanding() {
+        try{
+            long remainingTime = endTime-(new Date().getTime());
+            if (remainingTime<0){
+                if (seatingActive){
+                    seatingActive = false;
+                    startTime=new Date().getTime();
+                    int standingTime = componentService.getStandingTimes()[1]*60000;
+                    endTime=startTime+standingTime;
+                    remainingTime = endTime-(new Date().getTime());
+                }
+                else {
+                    seatingActive = true;
+                    startTime=new Date().getTime();
+                    int standingTime = componentService.getStandingTimes()[0]*60000;
+                    endTime=startTime+standingTime;
+                    remainingTime = endTime-(new Date().getTime());
+                }
             }
-            else {
-                seatingActive = true;
-                startTime=new Date().getTime();
-                int standingTime = componentService.getStandingTimes()[0]*60000;
-                endTime=startTime+standingTime;
-                remainingTime = endTime-(new Date().getTime());
+            String minutes = String.valueOf(new Date(remainingTime).getMinutes());
+            String seconds = String.valueOf((new Date(remainingTime).getSeconds())%60);
+            if (Float.parseFloat(seconds)/10<1){
+                seconds = "0"+seconds;
             }
+            if (Integer.parseInt(minutes)%10==0){
+                minutes = "0"+minutes;
+            }
+            remainingTimeStanding.setText(minutes+":"+seconds);
+            double percent = (double) ((new Date().getTime())-startTime)/(endTime-startTime);
+            this.progressStanding.setProgress(percent);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        String minutes = String.valueOf(new Date(remainingTime).getMinutes());
-        String seconds = String.valueOf((new Date(remainingTime).getSeconds())%60);
-        if (Float.parseFloat(seconds)/10<1){
-            seconds = "0"+seconds;
-        }
-        if (Integer.parseInt(minutes)%10==0){
-            minutes = "0"+minutes;
-        }
-        remainingTimeStanding.setText(minutes+":"+seconds);
-        double percent = (double) ((new Date().getTime())-startTime)/(endTime-startTime);
-        this.progressStanding.setProgress(percent);
+
     }
 
     @FXML
@@ -155,9 +157,9 @@ public class Startpage {
         if (standingSchedul != null) {
             standingSchedul.cancel(true);
             this.remainingTimeStanding.setText("00:00");
-            componentService.setNewStartPossible(true);
-            this.btnStartStanding.setDisable(!componentService.getNewStartPossible());
-            this.btnResetStanding.setDisable(componentService.getNewStartPossible());
+            componentService.setNewStandingStartPossible(true);
+            this.btnStartStanding.setDisable(!componentService.getNewStandingStartPossible());
+            this.btnResetStanding.setDisable(componentService.getNewStandingStartPossible());
         }
     }
 
@@ -168,6 +170,9 @@ public class Startpage {
     private void updatePomodoro(){
         log.info("cripple");
     }
+
+
+
 
 
 
